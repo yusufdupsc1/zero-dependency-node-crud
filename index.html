@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RawJS CRUD</title>
+    <style>
+        body { font-family: sans-serif; padding: 2em; }
+        h1, h2 { text-align: center; }
+        .container { max-width: 600px; margin: auto; }
+        .form-group { margin-bottom: 1em; }
+        label { display: block; margin-bottom: 0.5em; }
+        input { width: 100%; padding: 0.5em; box-sizing: border-box; }
+        button { padding: 0.5em 1em; cursor: pointer; }
+        ul { list-style-type: none; padding: 0; }
+        li { background: #f4f4f4; padding: 1em; margin-bottom: 0.5em; display: flex; justify-content: space-between; align-items: center; }
+        .actions button { margin-left: 0.5em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>RawJS CRUD</h1>
+
+        <h2>Create Item</h2>
+        <form id="create-form">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <input type="text" id="description" required>
+            </div>
+            <button type="submit">Create</button>
+        </form>
+
+        <h2>Items</h2>
+        <ul id="items-list">
+            <!-- Items will be displayed here -->
+        </ul>
+    </div>
+
+    <script>
+        // We will write client-side JavaScript here later
+    </script>
+</body>
+</html>
