@@ -26,7 +26,7 @@ The goal was to build a fully functional API server that could perform all four 
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/your-username/zero-dependency-node-crud.git
+    git clone https://github.com/yusufdupsc1/zero-dependency-node-crud.git
     cd zero-dependency-node-crud
     ```
 
