@@ -98,3 +98,4 @@ curl -X PUT -H "Content-Type: application/json" -d '{"name": "Alice Smith"}' htt
 ```bash
 curl -X DELETE http://localhost:3000/api/users/3
 ```
+# zero-dependency-node-crud
