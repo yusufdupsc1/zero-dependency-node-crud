@@ -93,7 +93,10 @@ async function createUser(req, res) {
 
 // --- PUT /api/users/:id ---
 async function updateUser(req, res, id) {
+  console.log(`updateUser called with id: ${id}`);
+  console.log('Current users array:', users);
   const userIndex = users.findIndex(u => u.id === id);
+  console.log(`userIndex found: ${userIndex}`);
 
   if (userIndex === -1) {
     return sendJSON(res, 404, { message: 'User Not Found' });
@@ -116,7 +119,7 @@ async function updateUser(req, res, id) {
 }
 
 // --- DELETE /api/users/:id ---
-function deleteUser(req, res, id) {
+async function deleteUser(req, res, id) {
   const userIndex = users.findIndex(u => u.id === id);
 
   if (userIndex !== -1) {
