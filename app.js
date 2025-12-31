@@ -4,23 +4,10 @@
  */
 
 const http = require('http');
+const { readData, writeData } = require('./utils/fileHandler');
 
-// ============================================================================
-//  IN-MEMORY DATABASE
-// ============================================================================
-// In a real application, this data would live in a database (e.g., PostgreSQL, MongoDB).
-// For this learning exercise, we use a simple in-memory array.
-// Note: This data resets every time the server restarts.
+let users = [];
 
-let users = [
-  { id: 1, name: 'Alice' },
-  { id: 2, name: 'Bob' },
-  { id: 3, name: 'Charlie' }
-];
-
-// A simple counter for generating unique IDs for new users.
-// We start at 4 because we already have 3 users.
-let nextUserId = 4;
 
 // ============================================================================
 //  HELPER FUNCTIONS
@@ -94,8 +81,10 @@ async function createUser(req, res) {
       return sendJSON(res, 400, { message: 'Name is a required field' });
     }
 
-    newUser.id = nextUserId++; // Assign a new ID from our counter
+    const maxId = users.reduce((max, user) => Math.max(max, user.id), 0);
+    newUser.id = maxId + 1;
     users.push(newUser);
+    await writeData(users); // Save data after adding new user
     sendJSON(res, 201, newUser); // 201 Created
   } catch (error) {
     sendJSON(res, 400, { message: error.message });
@@ -119,6 +108,7 @@ async function updateUser(req, res, id) {
 
     // Update the user's name
     users[userIndex].name = updatedData.name;
+    await writeData(users); // Save data after updating user
     sendJSON(res, 200, users[userIndex]);
   } catch (error) {
     sendJSON(res, 400, { message: error.message });
@@ -131,6 +121,7 @@ function deleteUser(req, res, id) {
 
   if (userIndex !== -1) {
     users.splice(userIndex, 1); // Remove the user from the array
+    await writeData(users); // Save data after deleting user
     res.writeHead(204, { 'Content-Type': 'application/json' }); // 204 No Content
     res.end();
   } else {
@@ -142,14 +133,28 @@ function deleteUser(req, res, id) {
 //  SERVER & ROUTER
 // ============================================================================
 
-const server = http.createServer((req, res) => {
-  const { method, url } = req;
-  const urlParts = url.split('/'); // e.g., ['', 'api', 'users', '1']
+// Start the server
+const PORT = 3000;
 
-  // Log every request for debugging
+async function initializeServer() {
+  try {
+    users = await readData();
+    console.log('Initial data loaded:', users);
+    http.createServer(serverHandler).listen(PORT, () => {
+      console.log(`Server is listening on http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error('Failed to load initial data or start server:', error);
+    process.exit(1); // Exit if we can't load data or start the server
+  }
+}
+
+const serverHandler = async (req, res) => {
+  const { method, url } = req;
+  const urlParts = url.split('/');
+
   console.log(`Incoming Request: ${method} ${url}`);
 
-  // --- Main Router Logic ---
   if (method === 'GET' && url === '/api/users') {
     getAllUsers(req, res);
   } else if (method === 'GET' && url.startsWith('/api/users/')) {
@@ -164,13 +169,8 @@ const server = http.createServer((req, res) => {
     const id = parseInt(urlParts[3]);
     deleteUser(req, res, id);
   } else {
-    // Handle homepage or any other route as a 404
     sendJSON(res, 404, { message: `Route not found for ${method} ${url}` });
   }
-});
+};
 
-// Start the server
-const PORT = 3000;
-server.listen(PORT, () => {
-  console.log(`Server is listening on http://localhost:${PORT}`);
-});
+initializeServer();
